@@ -28,7 +28,7 @@ gem install handleit
 
 ```ruby
 
-gem 'handleit'
+gem 'handleit', require: %w[handle]
 
 ```
 
