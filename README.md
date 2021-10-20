@@ -67,7 +67,7 @@ pry(main)>  .on_fail { |e| pp e }
 => "some_cool_string bla"
 
 # Handle.it on_fail
-pry(main)> Handle.it { Service.some_cool_logic }
+pry(main)> Handle.it { Service.error_raiser }
 pry(main)>  .with { |res| res + " bla" }
 pry(main)>  .with { |res| pp res }
 pry(main)>  .on_fail { |e| pp e }
