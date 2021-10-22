@@ -1,4 +1,4 @@
-## Shotgunner
+## Handleit
 
 ![Gem](https://img.shields.io/gem/dt/handleit.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/nucleom42/handleit.svg)
