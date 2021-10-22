@@ -40,7 +40,7 @@ class UsersController < ApplicationController
   def auth
     Handle.it { AuthService.authenticate! }
       .with { |res| redirect_to wellcome(user), notice: 'Welcome!'}
-      .on_error { |e| redirect_to login(user), notice: "Authentication error: #{e.message}" }
+      .on_fail { |e| redirect_to login(user), notice: "Authentication error: #{e.message}" }
   end
 end
 # ...
