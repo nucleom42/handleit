@@ -16,12 +16,12 @@ class Handle
   end
 
   def with
-    @result.return = yield(@result.return) if @result.success
+    @result.return = yield(@result.return, **options = {}) if @result.success
     self
   end
 
   def on_fail
-    yield(@result.error) unless @result.success
+    yield(@result.error, **options = {}) unless @result.success
     self
   end
 
