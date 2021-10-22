@@ -74,4 +74,12 @@ pry(main)>  .on_fail { |e| pp e }
 
 => #<StandardError: StandardError>
 
+# pipelining result with external lambdas
+pry(main)> size_minus_one = ->(str) { str.size - 1 }
+pry(main)> split_first = ->(str) { str.upcase.split.first }
+pry(main)> Handle.it { "Elixir rocks" }
+pry(main)>  .with { |res| split_first.call(res) }
+pry(main)>  .with { |res| size_minus_one.call(res) }.result
+
+=> 5
 ```

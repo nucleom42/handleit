@@ -29,7 +29,8 @@ describe Handle do
     context 'when pipelining with lambda' do
       subject do
         size_minus_one = ->(str) { str.size - 1 }
-        Handle.it { "Elixir rocks" }.with { |res| res.upcase.split.first }.with { |res| size_minus_one.call(res) } 
+        split_first = ->(str) { str.upcase.split.first }
+        Handle.it { "Elixir rocks" }.with { |res| split_first.call(res) }.with { |res| size_minus_one.call(res) } 
       end
       
       it 'result method returns calculated value' do
