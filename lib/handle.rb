@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class Handle
+  NotValidError = Class.new(StandardError)
+  
   class << self
-    def it(&block)
-      new.it(&block)
+    def it(options={}, &block)
+      new.it(options, &block)
     end
   end
 
-  def it
+  def it(options)
+    validate(options)
+
     @result = OpenStruct.new return: yield, success: true, error: nil
     self
   rescue StandardError => e
@@ -35,5 +39,14 @@ class Handle
 
   def error
     @result.error
+  end
+
+  private
+
+  def validate(options)
+    condition = options[:when]
+    condition_error = options[:error] || 'Not Valid!'
+    good_to_go = condition&.respond_to?(:call) ? condition&.call : true
+    raise NotValidError, condition_error unless good_to_go
   end
 end

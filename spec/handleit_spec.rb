@@ -18,7 +18,7 @@ describe Handle do
   describe '.it .with .result' do
     context 'when call service some_cool_logic method' do
       it 'returns concatenated string' do
-        expect(Handle.it{ Service.some_cool_logic }
+        expect(Handle.it { Service.some_cool_logic }
                      .with{ |res, bla: 'bla'| "#{res} bla #{bla}" }
                      .with{ |res, lab: 'lab'| "#{res} lab #{lab}" }
                      .result)
@@ -26,6 +26,29 @@ describe Handle do
       end
     end
     
+    context 'when guard' do
+      context 'when lambda condition returns true' do
+        it 'returns concatenated string' do
+          expect(
+            Handle.it(when: -> { 'bla'.is_a? String }) { Service.some_cool_logic }.with{ |res, bla: 'bla'| "#{res} bla #{bla}" }.result
+          ).to eq 'some_cool_string bla bla'
+        end
+      end
+
+      context 'when lambda condition returns false' do
+        subject { Handle.it(when: -> { 'bla'.is_a? Integer} ) { Service.some_cool_logic }.with{ |res, bla: 'bla'| "#{res} bla #{bla}" } }
+        
+        it 'result method returns nil' do
+          expect(subject.result).to be_nil
+        end
+
+        it 'error method returns error' do
+          expect(subject.error).to be_instance_of Handle::NotValidError
+        end
+      end
+      
+    end
+      
     context 'when pipelining with lambda' do
       subject do
         size_minus_one = ->(str) { str.size - 1 }

@@ -37,8 +37,13 @@ gem 'handleit', require: %w[handle]
 ```ruby
 class UsersController < ApplicationController
   # ...
+  # it is possible to use guard arg hash, where
+  # when: lambda, error: error_string 
+  # it will evaluate execution before it block and in case of fail it will go to on_fail block
   def auth
-    Handle.it { AuthService.authenticate! }
+    Handle.it(when: -> { User.find(params[:user_id]) }, error: 'User not found') do
+      AuthService.authenticate!
+    end 
       .with { |res| redirect_to wellcome(user), notice: 'Welcome!'}
       .on_fail { |e| redirect_to login(user), notice: "Authentication error: #{e.message}" }
   end
