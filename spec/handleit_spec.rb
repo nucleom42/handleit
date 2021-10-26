@@ -26,6 +26,18 @@ describe Handle do
       end
     end
     
+    context 'when with block raise an error' do
+      subject { Handle.it { Service.some_cool_logic }.with{ |res, bla: 'bla'| raise StandardError, 'oi' } }
+
+      it 'result method returns nil' do
+        expect(subject.result).to be_nil
+      end
+
+      it 'error method returns error' do
+        expect(subject.error).to be_instance_of StandardError
+      end
+    end
+    
     context 'when guard' do
       context 'when lambda condition returns true' do
         it 'returns concatenated string' do

@@ -2,9 +2,9 @@
 
 class Handle
   NotValidError = Class.new(StandardError)
-  
+
   class << self
-    def it(options={}, &block)
+    def it(options = {}, &block)
       new.it(options, &block)
     end
   end
@@ -15,13 +15,14 @@ class Handle
     @result = OpenStruct.new return: yield, success: true, error: nil
     self
   rescue StandardError => e
-    @result = OpenStruct.new return: nil, success: false, error: e
-    self
+    error_handler(e)
   end
 
   def with
     @result.return = yield(@result.return, **options = {}) if success?
     self
+  rescue StandardError => e
+    error_handler(e)
   end
 
   def on_fail
@@ -42,6 +43,11 @@ class Handle
   end
 
   private
+
+  def error_handler(err)
+    @result = OpenStruct.new return: nil, success: false, error: err
+    self
+  end
 
   def validate(options)
     condition = options[:when]
