@@ -41,11 +41,15 @@ class UsersController < ApplicationController
   # when: lambda, error: error_string 
   # it will evaluate execution before it block and in case of fail it will go to on_fail block
   def auth
-    Handle.it(when: -> { User.find(params[:user_id]) }, error: 'User not found') do
+    Handle.it(when: valid?, not_valid_error: 'User not found') do
       AuthService.authenticate!
     end 
       .with { |res| redirect_to wellcome(user), notice: 'Welcome!'}
       .on_fail { |e| redirect_to login(user), notice: "Authentication error: #{e.message}" }
+  end
+  
+  def valid?
+    # some validation logic
   end
 end
 # ...

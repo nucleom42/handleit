@@ -50,9 +50,9 @@ class Handle
   end
 
   def validate(options)
-    condition = options[:when]
-    condition_error = options[:error] || 'Not Valid!'
-    good_to_go = condition&.respond_to?(:call) ? condition&.call : true
+    condition = options[:when] || true
+    condition_error = options[:error] || options[:not_valid_error] || 'Not Valid!'
+    good_to_go = condition&.respond_to?(:call) ? condition&.call : condition
     raise NotValidError, condition_error unless good_to_go
   end
 end

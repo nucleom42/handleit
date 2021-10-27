@@ -39,6 +39,20 @@ describe Handle do
     end
     
     context 'when guard' do
+      context 'when method condition returns true' do
+        it 'returns concatenated string' do
+          class Foo
+            def self.bla?
+              true
+            end
+          end
+          
+          expect(
+            Handle.it(when: Foo.bla?) { Service.some_cool_logic }.with{ |res, bla: 'bla'| "#{res} bla #{bla}" }.result
+          ).to eq 'some_cool_string bla bla'
+        end
+      end
+      
       context 'when lambda condition returns true' do
         it 'returns concatenated string' do
           expect(
