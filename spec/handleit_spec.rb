@@ -38,18 +38,31 @@ describe Handle do
       end
     end
     
+    class Foo
+      def self.bla?
+        true
+      end
+      
+      def self.falsey_bla
+        false
+      end
+    end
+    
     context 'when guard' do
       context 'when method condition returns true' do
         it 'returns concatenated string' do
-          class Foo
-            def self.bla?
-              true
-            end
-          end
-          
           expect(
             Handle.it(when: Foo.bla?) { Service.some_cool_logic }.with{ |res, bla: 'bla'| "#{res} bla #{bla}" }.result
           ).to eq 'some_cool_string bla bla'
+        end
+      end
+
+      context 'when method condition returns false' do
+        it 'returns specific error' do
+          expect(
+            Handle.it(when: Foo.falsey_bla, not_valid_error: 'yay'){ Service.some_cool_logic }
+              .with{ |res, bla: 'bla'| "#{res} bla #{bla}" }.error.message
+          ).to eq 'yay'
         end
       end
       
