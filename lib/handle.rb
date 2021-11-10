@@ -20,6 +20,8 @@ class Handle
   end
 
   def with(args={})
+    args = args.slice(:on_fail)
+
     if success?
       @returns_pool << yield(@result.return, **options = {})
       @result.return = @returns_pool.last
@@ -62,6 +64,7 @@ class Handle
     condition = options[:when].nil? || options[:when]
     condition_error = options[:error] || options[:not_valid_error] || 'Not Valid!'
     good_to_go = condition&.respond_to?(:call) ? condition&.call : condition
+
     raise NotValidError, condition_error unless good_to_go
   end
 end
