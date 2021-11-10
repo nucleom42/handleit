@@ -17,12 +17,12 @@
 * Could be good matching in rails controllers, when it is important to have declarative way of handling execution.
 * Use **guard** feature as 'it' method options like:
 ```ruby
-Handle.it( when: valid?, not_valid_error: 'User not found' )
+Handle.it(when: valid?, not_valid_error: 'User not found')
   .with { |res| redirect_to wellcome(user), notice: 'Welcome!' }
 ```
 * Use **rollback** feature as 'with' method options like:
 ```ruby
-Handle.it { "Ruby rules" }.with( on_fail: :rollback ) { |res| res.upcase.split.unknow_method_call }
+Handle.it { "Ruby rules" }.with(on_fail: :rollback) { |res| res.upcase.split.unknow_method_call }
 ```
 if you want to have last successful result neglecting errors.
 
@@ -47,7 +47,7 @@ gem 'handleit', require: %w[handle]
 ```ruby
 class UsersController < ApplicationController
   def auth
-    Handle.it( when: valid?, not_valid_error: 'User not found' ) do
+    Handle.it(when: valid?, not_valid_error: 'User not found') do
       AuthService.authenticate!
     end 
       .with { |res| redirect_to wellcome(user), notice: 'Welcome!'}
@@ -100,7 +100,7 @@ pry(main)>  .result
 # rollback result instead of sending it into on_fail block, so it returns latest successful
 pry(main)> Handle.it { "Elixir rocks" }
 pry(main)>  .with { |res| res.size - 1 }
-pry(main)>  .with( on_fail: :rollback ) { |res| res.upcase.split.unknow_method_call }
+pry(main)>  .with(on_fail: :rollback) { |res| res.upcase.split.unknow_method_call }
 pry(main)>  .on_fail { |e| pp e }
 pry(main)>  .result
 
