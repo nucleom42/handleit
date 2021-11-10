@@ -37,9 +37,9 @@ gem 'handleit', require: %w[handle]
 ```ruby
 class UsersController < ApplicationController
   # ...
-  # it is possible to use guard arg hash, where
-  # when: lambda, error: error_string 
-  # it will evaluate execution before it block and in case of fail it will go to on_fail block
+  # it is possible to use guard arg hash, 'where'
+  # when: :method, not_valid_error: error_string 
+  # it will evaluate execution before it block and in case of fail it will fall into on_fail block
   def auth
     Handle.it(when: valid?, not_valid_error: 'User not found') do
       AuthService.authenticate!
@@ -83,12 +83,20 @@ pry(main)>  .on_fail { |e| pp e }
 
 => #<StandardError: StandardError>
 
-# pipelining result with external lambdas
-pry(main)> size_minus_one = ->(str) { str.size - 1 }
-pry(main)> split_first = ->(str) { str.upcase.split.first }
+# pipelining result
 pry(main)> Handle.it { "Elixir rocks" }
-pry(main)>  .with { |res| split_first.call(res) }
-pry(main)>  .with { |res| size_minus_one.call(res) }.result
+pry(main)>  .with { |res| res.size - 1 }
+pry(main)>  .with { |res| res.upcase.split.first }
+pry(main)>  .result
 
 => 5
+
+# rollback result instead of sending it into on_fail block, so it returns latest successful
+pry(main)> Handle.it { "Elixir rocks" }
+pry(main)>  .with { |res| res.size - 1 }
+pry(main)>  .with(on_fail: :rollback) { |res| res.upcase.split.unknow_method_call }
+pry(main)>  .on_fail { |e| pp e }
+pry(main)>  .result
+
+=> 11
 ```

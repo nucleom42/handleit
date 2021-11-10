@@ -73,6 +73,27 @@ describe Handle do
           ).to eq 'some_cool_string bla bla'
         end
       end
+      
+      context 'when in with method passed on_fail: :rollback' do
+        subject do 
+          Handle.it{ Service.some_cool_logic }
+                .with{ |res| "#{res} bla" }
+                .with{ |res| "#{res} +++" }
+                .with(on_fail: :rollback) do |res|
+                  res.upcase!
+                  raise StandardError 
+                end
+                .on_fail{|e| raise e}
+        end
+
+        it 'error is nil' do
+          expect(subject.error).to be_nil
+        end
+
+        it 'returns rolled back value' do
+          expect(subject.result).to eq 'some_cool_string bla +++'
+        end
+      end
 
       context 'when lambda condition returns false' do
         subject { Handle.it(when: -> { 'bla'.is_a? Integer} ) { Service.some_cool_logic }.with{ |res, bla: 'bla'| "#{res} bla #{bla}" } }

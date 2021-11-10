@@ -13,16 +13,25 @@ class Handle
     validate(options)
 
     @result = OpenStruct.new return: yield, success: true, error: nil
+    @returns_pool = []
     self
   rescue StandardError => e
     error_handler(e)
   end
 
-  def with
-    @result.return = yield(@result.return, **options = {}) if success?
+  def with(args={})
+    if success?
+      @returns_pool << yield(@result.return, **options = {})
+      @result.return = @returns_pool.last
+    end
     self
   rescue StandardError => e
-    error_handler(e)
+    if args[:on_fail] == :rollback
+      @result.return = @returns_pool.last
+      self
+    else
+      error_handler(e)
+    end
   end
 
   def on_fail
