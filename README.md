@@ -6,7 +6,7 @@
 
 **Problem:**
 
-* Want to have JS Promise-like way of handling logic execution, with ability to chain handlers?
+* Want to have JS Promise-like way of handling logic execution, with ability to chain handlers, plus useful additions like guard adn rollback?
 
 **Solution:**
 
@@ -15,8 +15,16 @@
 **Notes:**
 
 * Could be good matching in rails controllers, when it is important to have declarative way of handling execution.
-* Use **guard** feature as 'it' method options like: `when: :validation_method_name, not_valid_error: 'Error description.`
-* Use **rollback** feature as 'with' method options like: `on_fail: :rollback`, if you want to have last successful result neglecting errors.
+* Use **guard** feature as 'it' method options like:
+```ruby
+Handle.it( when: valid?, not_valid_error: 'User not found' )
+  .with { |res| redirect_to wellcome(user), notice: 'Welcome!' }
+```
+* Use **rollback** feature as 'with' method options like:
+```ruby
+Handle.it { "Ruby rules" }.with( on_fail: :rollback ) { |res| res.upcase.split.unknow_method_call }
+```
+if you want to have last successful result neglecting errors.
 
 ## Install
 
@@ -38,12 +46,8 @@ gem 'handleit', require: %w[handle]
 
 ```ruby
 class UsersController < ApplicationController
-  # ...
-  # it is possible to use guard arg hash, 'where'
-  # when: :method, not_valid_error: error_string 
-  # it will evaluate execution before it block and in case of fail it will fall into on_fail block
   def auth
-    Handle.it(when: valid?, not_valid_error: 'User not found') do
+    Handle.it( when: valid?, not_valid_error: 'User not found' ) do
       AuthService.authenticate!
     end 
       .with { |res| redirect_to wellcome(user), notice: 'Welcome!'}
@@ -96,7 +100,7 @@ pry(main)>  .result
 # rollback result instead of sending it into on_fail block, so it returns latest successful
 pry(main)> Handle.it { "Elixir rocks" }
 pry(main)>  .with { |res| res.size - 1 }
-pry(main)>  .with(on_fail: :rollback) { |res| res.upcase.split.unknow_method_call }
+pry(main)>  .with( on_fail: :rollback ) { |res| res.upcase.split.unknow_method_call }
 pry(main)>  .on_fail { |e| pp e }
 pry(main)>  .result
 
