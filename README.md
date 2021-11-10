@@ -15,8 +15,8 @@
 **Notes:**
 
 * Could be good matching in rails controllers, when it is important to have declarative way of handling execution.
-* Use **guard** feature as 'it' method options as: 'when: :validation_method_name, not_valid_error: 'Error description''.
-* Use **rollback** feature as 'with' method options as: 'on_fail: :rollback', if you want to have last successful result neglecting errors.
+* Use **guard** feature as 'it' method options like: `when: :validation_method_name, not_valid_error: 'Error description.`
+* Use **rollback** feature as 'with' method options like: `on_fail: :rollback`, if you want to have last successful result neglecting errors.
 
 ## Install
 
