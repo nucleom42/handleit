@@ -15,14 +15,27 @@
 **Notes:**
 
 * Could be good matching in rails controllers, when it is important to have declarative way of handling execution.
-* Use **guard** feature as 'it' method options like:
+* Use **guard** feature with 'it' method args, like:
 ```ruby
+def valid?
+  false
+end
+
 Handle.it(when: valid?, not_valid_error: 'User not found')
-  .with { |res| redirect_to wellcome(user), notice: 'Welcome!' }
+  .with { |r| redirect_to wellcome(user), notice: 'Welcome!' }
+  .on_fail { |e| pp e.message }
+
+=> 'User not found'
 ```
-* Use **rollback** feature as 'with' method options like:
+if valid returns 'false', it goes to on_fail block with specific error message
+
+* Use **rollback** feature with 'with' method args, like:
 ```ruby
-Handle.it { "Ruby rules" }.with(on_fail: :rollback) { |res| res.upcase.split.unknow_method_call }
+Handle.it { "Ruby rules" }
+  .with(on_fail: :rollback) { |res| res.upcase.split.unknow_method_call }
+  .result
+
+=> 'Ruby rules'
 ```
 if you want to have last successful result neglecting errors.
 
