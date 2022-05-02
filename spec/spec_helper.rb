@@ -2,4 +2,5 @@
 
 require 'rspec'
 require 'handle'
+require 'h'
 require 'pry'

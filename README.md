@@ -91,6 +91,16 @@ pry(main)> Handle.it { Service.some_cool_logic }
 pry(main)>  .with { |res| res + " bla" }
 pry(main)>  .with { |res| pp res }
 pry(main)>  .on_fail { |e| pp e }
+pry(main)>  .result
+
+=> "some_cool_string bla"
+
+# Handle.it shortcut methods
+pry(main)> H.it { Service.some_cool_logic }
+pry(main)>  .> { |res| res + " bla" }
+pry(main)>  .> { |res| pp res }
+pry(main)>  .e { |e| pp e }
+pry(main)>  .<=
 
 => "some_cool_string bla"
 

@@ -141,5 +141,15 @@ describe Handle do
         expect(@var).to eq "raiser"
       end
     end
+    context '>' do
+      it 'returns concatenated string' do
+        expect(H.it { Service.some_cool_logic }
+                     .> { |res, bla: 'bla'| "#{res} bla #{bla}" }
+                     .> { |res, lab: 'lab'| "#{res} lab #{lab}" }
+                     .e {|e| @var = e.message }
+                     .<= )
+          .to eq('some_cool_string bla bla lab lab')
+      end
+    end
   end
 end

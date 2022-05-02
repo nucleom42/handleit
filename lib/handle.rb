@@ -19,11 +19,23 @@ class Handle
     error_handler(e)
   end
 
-  def with(args={})
+  def >(args={}, &block)
+    with(args, &block)
+  end
+
+  def <=
+    result
+  end
+
+  def e(&block)
+    on_fail(&block)
+  end
+
+  def with(args={}, &block)
     args = args.slice(:on_fail)
 
     if success?
-      @returns_pool << yield(@result.return, **options = {})
+      @returns_pool << block.call(@result.return, **options = {})
       @result.return = @returns_pool.last
     end
     self
@@ -36,8 +48,8 @@ class Handle
     end
   end
 
-  def on_fail
-    yield(@result.error, **options = {}) unless success?
+  def on_fail(&block)
+    block.call(@result.error, **options = {}) unless success?
     self
   end
 
