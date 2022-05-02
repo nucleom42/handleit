@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    handleit (1.2.6)
+    handleit (1.2.7)
 
 GEM
   remote: http://rubygems.org/
@@ -61,4 +61,4 @@ DEPENDENCIES
   rubocop
 
 BUNDLED WITH
-   2.1.4
+   2.3.12
